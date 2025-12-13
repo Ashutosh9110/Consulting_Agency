@@ -5,6 +5,21 @@ const User = require("../models/User")
 
 
 
+const generateAccessToken = (user) => {
+    return jwt.sign(
+        { id: user.id, role: user.role, email: user.email },
+        process.env.JWT_SECRET,
+        { expiresIn: "15m" }
+    )
+}
+
+const generateRefreshToken = (user) => {
+    return jwt.sign(
+        { id: user.id },
+        process.env.JWT_REFRESH_SECRET,
+        { expiresIn: "7d" }
+    )
+}
 
 exports.signup = async (req, res) => {
     try {
@@ -46,3 +61,23 @@ exports.login = async (req, res) => {
         return res.status(500).json({ message: err.message })
     }
 }
+
+exports.refreshToken = (req, res) => {
+    const { token } = req.body
+
+    if (!token) return res.status(400).json({ message: "Refresh token required" })
+
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_REFRESH_SECRET)
+        const accessToken = jwt.sign(
+            { id: decoded.id },
+            process.env.JWT_SECRET,
+            { expiresIn: "15m" }
+        )
+
+        return res.json({ accessToken })
+    } catch (err) {
+        return res.status(403).json({ message: "Invalid refresh token" })
+    }
+}
+
