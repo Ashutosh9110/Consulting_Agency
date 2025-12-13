@@ -81,3 +81,26 @@ exports.refreshToken = (req, res) => {
     }
 }
 
+exports.googleAuthCallback = async (req, res) => {
+    try {
+        const googleProfile = req.user 
+
+        let user = await User.findOne({ where: { googleId: googleProfile.id } })
+
+        if (!user) {
+            user = await User.create({
+                name: googleProfile.displayName,
+                email: googleProfile.emails[0].value,
+                googleId: googleProfile.id,
+                role: "user"
+            })
+        }
+
+        const accessToken = generateAccessToken(user)
+        const refreshToken = generateRefreshToken(user)
+
+        return res.json({ accessToken, refreshToken, user })
+    } catch (err) {
+        return res.status(500).json({ message: err.message })
+    }
+}
