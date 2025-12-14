@@ -1,14 +1,22 @@
-import { useForm } from "react-hook-form";
-import api from "../../../lib/axios";
-import { Link } from "react-router-dom";
+import { useForm } from "react-hook-form"
+import api from "../../../lib/axios"
+import { Link } from "react-router-dom"
 
 export default function Register() {
-  const { register, handleSubmit } = useForm();
+  const { register, handleSubmit } = useForm()
 
   const onSubmit = async (data) => {
-    await api.post("/auth/signup", data);
-    alert("Check your email to verify your account");
-  };
+    try {
+      await api.post("/auth/signup", data)
+      alert("Check your email to verify your account")
+    } catch (err) {
+      const msg =
+      err.response?.data?.message ||
+      "Something went wrong. Please try again.";
+      alert(msg);
+    }
+  }
+  
 
   return (
     <div className="relative min-h-screen flex items-center justify-center overflow-hidden">
@@ -36,18 +44,18 @@ export default function Register() {
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <input
-            {...register("name")}
+            {...register("name", { required: true, minLength: 2 })}            
             placeholder="Full Name"
             className="w-full px-4 py-3 rounded-lg bg-white/20 text-white placeholder-gray-300 outline-none focus:ring-2 focus:ring-white"
           />
           <input
-            {...register("email")}
+            {...register("email", { required: true })}
             type="email"
             placeholder="Email address"
             className="w-full px-4 py-3 rounded-lg bg-white/20 text-white placeholder-gray-300 outline-none focus:ring-2 focus:ring-white"
           />
           <input
-            {...register("password")}
+            {...register("password", { required: true, minLength: 6 })}
             type="password"
             placeholder="Password"
             className="w-full px-4 py-3 rounded-lg bg-white/20 text-white placeholder-gray-300 outline-none focus:ring-2 focus:ring-white"

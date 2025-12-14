@@ -6,6 +6,9 @@ const User = require("../models/User")
 
 
 const generateAccessToken = (user) => {
+    // console.log("JWT_SECRET:", process.env.JWT_SECRET)
+    // console.log("JWT_REFRESH_SECRET:", process.env.JWT_REFRESH_SECRET)
+
     return jwt.sign(
         { id: user.id, role: user.role, email: user.email },
         process.env.JWT_SECRET,
@@ -24,6 +27,7 @@ const generateRefreshToken = (user) => {
 exports.signup = async (req, res) => {
     try {
         const { name, email, password, role } = req.body
+        console.log("req body:", req.body)
         const exists = await User.findOne({ where: { email } })
         if (exists) return res.status(400).json({ message: "Email already exists" })
         const hashed = await bcrypt.hash(password, 10)
@@ -35,6 +39,7 @@ exports.signup = async (req, res) => {
         })
         return res.status(201).json({ message: "User created", user })
     } catch (err) {
+        console.error("signup error:", err)
         return res.status(500).json({ message: err.message })
     }
 }
@@ -59,6 +64,7 @@ exports.refreshToken = (req, res) => {
     if (!token) return res.status(400).json({ message: "Refresh token required" })
     try {
         const decoded = jwt.verify(token, process.env.JWT_REFRESH_SECRET)
+
         const accessToken = jwt.sign(
             { id: decoded.id },
             process.env.JWT_SECRET,
