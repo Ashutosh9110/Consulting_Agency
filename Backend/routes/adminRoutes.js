@@ -7,6 +7,6 @@ router.use(auth)
 router.use(authorizeRoles("admin"))
 
 router.get("/users", getAllUsers)
-router.delete("/users/:id", deleteUser)
+// router.delete("/users/:id", deleteUser)
 
 module.exports = router

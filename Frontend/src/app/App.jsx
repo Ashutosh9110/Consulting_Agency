@@ -10,11 +10,9 @@ import Welcome from "../features/home/pages/Welcome"
 import ResetPassword from "../features/auth/pages/ResetPassword"
 import ForgotPassword from "../features/auth/pages/ForgotPassword"
 import Home from "../features/home/pages/Home"
+import MyProfile from "../features/home/pages/MyProfile"
 
-// // Placeholder pages
-// const ForgotPassword = () => <div>Forgot Password</div>
 const Unauthorized = () => <div>Unauthorized</div>  
-// const Home = () => <div>Home</div>
 
 function App() {
   return (
@@ -35,6 +33,7 @@ function App() {
           <Route path="/admin" element={ <ProtectedRoute role="admin"> <AdminDashboard /> </ProtectedRoute> } />
           <Route path="/home" element={ <ProtectedRoute role="user"> <Home /> </ProtectedRoute> } />
           <Route path="/admin/users" element={ <ProtectedRoute role="admin"> <UsersList /> </ProtectedRoute>} />
+          <Route path="/my-profile" element={ <ProtectedRoute> <MyProfile /> </ProtectedRoute> } />
 
           {/* Catch-all */}
           <Route path="*" element={<Navigate to="/" />} />

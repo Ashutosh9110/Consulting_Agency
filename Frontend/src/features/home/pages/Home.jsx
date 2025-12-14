@@ -2,17 +2,16 @@ import { Link } from "react-router-dom"
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black text-white px-8 py-16">
-      
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black text-white px-4 sm:px-8 py-12 sm:py-16">
       <section className="max-w-5xl mx-auto text-center">
-        <h1 className="text-4xl md:text-5xl font-bold mb-4">
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">
           Strategic Consulting for Modern Businesses
         </h1>
         <p className="text-gray-300 text-lg mb-8">
           We help organizations scale faster, operate smarter, and lead with confidence.
         </p>
 
-        <div className="flex justify-center gap-4">
+        <div className="flex flex-col sm:flex-row justify-center gap-4">
           <Link
             to="/my-profile"
             className="px-6 py-3 bg-white text-black rounded-lg font-semibold hover:bg-gray-200 transition"
@@ -28,7 +27,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="max-w-6xl mx-auto mt-20 grid md:grid-cols-3 gap-8">
+      <section className="max-w-6xl mx-auto mt-16 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
         {[
           {
             title: "Business Strategy",

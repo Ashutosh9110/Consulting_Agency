@@ -19,7 +19,7 @@ app.use(
 app.use(express.json())
 
 app.use("/api/auth", authRoutes);
-app.use("/api", userRoutes)
+app.use("/api/users", userRoutes)
 app.use("/api/admin", adminRoutes);
 app.use("/uploads", express.static("uploads"));
 app.use(errors())

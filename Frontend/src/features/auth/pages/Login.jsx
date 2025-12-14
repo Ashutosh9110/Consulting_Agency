@@ -11,6 +11,7 @@ export default function Login() {
   const onSubmit = async (data) => {
     try {
       const res = await api.post("/auth/login", data)
+      localStorage.setItem("accessToken", res.data.accessToken)
       login(res.data)
       const role = res.data.user.role
       if (role === "admin") {
@@ -38,7 +39,7 @@ export default function Login() {
       </video>
 
       <div className="absolute inset-0 bg-black/60" />
-      <div className="relative z-10 w-full max-w-md bg-white/10 backdrop-blur-xl rounded-2xl shadow-2xl p-8 text-white">
+      <div className="relative z-10 w-[90%] max-w-md bg-white/10 backdrop-blur-xl rounded-2xl shadow-2xl p-6 sm:p-8 text-white">
         <h2 className="text-3xl font-bold text-center mb-2">
           Welcome Back
         </h2>

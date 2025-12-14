@@ -6,13 +6,15 @@ export default function AdminDashboard() {
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-800 text-white">
       <Navbar />
       <div className="flex pt-20">
-        <Sidebar />
+        <aside className="hidden md:block">
+          <Sidebar />
+        </aside>
 
-        <main className="flex-1 p-8">
+        <main className="flex-1 p-4 sm:p-6 md:p-8">
           <h1 className="text-3xl font-bold mb-6">
             Dashboard
           </h1>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
             <div className="bg-white/10 backdrop-blur-xl rounded-xl p-6">
               <h3 className="text-sm text-gray-300">Total Users</h3>
               <p className="text-3xl font-bold mt-2">1,248</p>
