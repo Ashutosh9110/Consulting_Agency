@@ -4,49 +4,42 @@ const AuthContext = createContext(null)
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null)
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [token, setToken] = useState(null)
   const [loading, setLoading] = useState(true)
 
-  const login = ({ accessToken, user }) => {
-    localStorage.setItem("accessToken", accessToken)
-    setUser(user)
-    setIsAuthenticated(true)
+  const login = (data) => {
+    setUser(data.user)
+    setToken(data.accessToken)
+
+    localStorage.setItem("user", JSON.stringify(data.user))
+    localStorage.setItem("token", data.accessToken)
   }
+
   const logout = () => {
-    localStorage.removeItem("accessToken")
+    localStorage.removeItem("user")
+    localStorage.removeItem("token")
     setUser(null)
-    setIsAuthenticated(false)
+    setToken(null)
   }
+
   useEffect(() => {
-    const token = localStorage.getItem("accessToken")
-    if (!token) {
-      setLoading(false)
-      return
+    const storedUser = localStorage.getItem("user")
+    const storedToken = localStorage.getItem("token")
+
+    if (storedUser && storedToken) {
+      setUser(JSON.parse(storedUser))
+      setToken(storedToken)
     }
-    try {
-      const payload = JSON.parse(atob(token.split(".")[1]))
-      if (payload.exp * 1000 < Date.now()) {
-        logout()
-      } else {
-        setUser({
-          id: payload.id,
-          email: payload.email,
-          role: payload.role,
-        })
-        setIsAuthenticated(true)
-      }
-    } catch (err) {
-      logout()
-    } finally {
-      setLoading(false)
-    }
+
+    setLoading(false)
   }, [])
 
   return (
     <AuthContext.Provider
       value={{
         user,
-        isAuthenticated,
+        token,
+        isAuthenticated: !!token,
         loading,
         login,
         logout,

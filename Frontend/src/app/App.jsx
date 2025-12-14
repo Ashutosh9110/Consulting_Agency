@@ -28,19 +28,9 @@ function App() {
           <Route path="/unauthorized" element={<Unauthorized />} />
 
           {/* Admin protected routes */}
-          <Route
-            path="/admin"
-            element={
-              <ProtectedRoute role="admin">
-                <AdminDashboard />
-              </ProtectedRoute>
-            }
-          />
-
-          <Route
-            path="/admin/users" element={ <ProtectedRoute role="admin"> 
-            <UsersList /> 
-            </ProtectedRoute>} />
+          <Route path="/admin" element={ <ProtectedRoute role="admin"> <AdminDashboard /> </ProtectedRoute> } />
+          <Route path="/home" element={ <ProtectedRoute role="user"> <Home /> </ProtectedRoute> } />
+          <Route path="/admin/users" element={ <ProtectedRoute role="admin"> <UsersList /> </ProtectedRoute>} />
 
           {/* Catch-all */}
           <Route path="*" element={<Navigate to="/" />} />

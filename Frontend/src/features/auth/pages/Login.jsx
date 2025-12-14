@@ -12,12 +12,14 @@ export default function Login() {
     try {
       const res = await api.post("/auth/login", data)
       login(res.data)
-      navigate("/admin")
+      const role = res.data.user.role
+      if (role === "admin") {
+        navigate("/admin")
+      } else {
+        navigate("/home")
+      }
     } catch (err) {
-      const msg =
-        err.response?.data?.message ||
-        "Login failed. Please try again."
-      alert(msg)
+      alert(err.response?.data?.message || "Login failed. Please try again.")
     }
   }
 
