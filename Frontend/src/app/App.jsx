@@ -7,11 +7,14 @@ import ProtectedRoute from "./ProtectedRoute"
 import Register from "../features/auth/pages/Register"
 import Login from "../features/auth/pages/Login"
 import Welcome from "../features/home/pages/Welcome"
+import ResetPassword from "../features/auth/pages/ResetPassword"
+import ForgotPassword from "../features/auth/pages/ForgotPassword"
+import Home from "../features/auth/pages/Home"
 
-// Placeholder pages
-const ForgotPassword = () => <div>Forgot Password</div>
+// // Placeholder pages
+// const ForgotPassword = () => <div>Forgot Password</div>
 const Unauthorized = () => <div>Unauthorized</div>  
-const Home = () => <div>Home</div>
+// const Home = () => <div>Home</div>
 
 function App() {
   return (
@@ -26,6 +29,7 @@ function App() {
           <Route path="/verify-email" element={<VerifyEmail />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/unauthorized" element={<Unauthorized />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
 
           {/* Admin protected routes */}
           <Route path="/admin" element={ <ProtectedRoute role="admin"> <AdminDashboard /> </ProtectedRoute> } />

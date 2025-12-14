@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken")
 const User = require("../models/User")
 const crypto = require("crypto")
 const { sendMail } = require("../utils/sendMail")
-const { verifyEmailTemplate } = require("../utils/emailTemplates");
+const { verifyEmailTemplate } = require("../utils/emailTemplates")
 
 const generateAccessToken = (user) => {
   // console.log("JWT_SECRET:", process.env.JWT_SECRET)
@@ -136,49 +136,66 @@ exports.verifyEmail = async (req, res) => {
 
 exports.forgotPassword = async (req, res) => {
   const { email } = req.body
-
   const user = await User.findOne({ where: { email } })
+
   if (!user) {
     return res.status(404).json({ message: "User not found" })
   }
-
   const token = crypto.randomBytes(32).toString("hex")
-
-  user.resetPasswordToken = token
-  user.resetPasswordExpires = Date.now() + 1000 * 60 * 30 // 30 mins
+  user.passwordResetToken = token
+  user.passwordResetExpires = Date.now() + 3600 * 1000 // 1 hour
   await user.save()
 
   const resetLink = `http://localhost:5173/reset-password?token=${token}`
-
   await sendMail({
     to: email,
-    subject: "Reset your password",
+    subject: "Reset your password – Maxlence Consulting",
     htmlContent: `
-      <p>Click below to reset your password:</p>
-      <a href="${resetLink}">Reset Password</a>
+      <p>Hello ${user.name},</p>
+      <p>Click the link below to reset your password. This link is valid for 1 hour.</p>
+      <a href="${resetLink}" style="background:#2563ebcolor:whitepadding:10px 20pxborder-radius:5pxtext-decoration:none">Reset Password</a>
     `,
   })
 
-  res.json({ message: "Password reset link sent to email" })
+  res.json({ message: "Reset link sent to your email" })
 }
 
 exports.resetPassword = async (req, res) => {
-  const { token, newPassword } = req.body
-
-  const user = await User.findOne({
-    where: {
-      resetPasswordToken: token,
-      resetPasswordExpires: { [Op.gt]: Date.now() },
-    },
-  })
-
-  if (!user) {
+  try {
+  const { token, password } = req.body
+  const user = await User.findOne({ where: { passwordResetToken: token }})
+  if (!user || user.passwordResetExpires < Date.now()) {
     return res.status(400).json({ message: "Invalid or expired token" })
   }
 
-  user.password = await bcrypt.hash(newPassword, 10)
-  user.resetPasswordToken = null
-  user.resetPasswordExpires = null
+  const isSamePassword = await bcrypt.compare(password, user.password);
+  if (isSamePassword) {
+    return res.status(400).json({ message: "New password cannot be same as the old password" });
+  }
+
+  user.password = await bcrypt.hash(password, 10)
+  user.passwordResetToken = null
+  user.passwordResetExpires = null
   await user.save()
-  res.json({ message: "Password reset successful" })
+
+  res.json({ message: "Password reset successfully" })
+} catch (err) {
+  
+  console.error("resetPassword error:", err);
+  res.status(500).json({ message: "Something went wrong" });
+}
+}
+
+
+
+exports.getUsers = async (req, res) => {
+  const { search } = req.query
+  const users = await User.findAll({
+    where: search
+      ? { email: { [Op.like]: `%${search}%` } }
+      : {},
+    attributes: ["id", "name", "email", "role"],
+  })
+
+  res.json(users)
 }

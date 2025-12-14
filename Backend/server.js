@@ -4,6 +4,7 @@ const cors = require("cors")
 const sequelize = require("./config/sequelize")
 const authRoutes = require("./routes/authRoutes")
 const adminRoutes = require("./routes/adminRoutes")
+const userRoutes = require("./routes/userRoutes")
 const { errors } = require("celebrate");
 
 
@@ -18,6 +19,7 @@ app.use(
 app.use(express.json())
 
 app.use("/api/auth", authRoutes);
+app.use("/api", userRoutes)
 app.use("/api/admin", adminRoutes);
 app.use("/uploads", express.static("uploads"));
 app.use(errors())
