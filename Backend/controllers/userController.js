@@ -10,9 +10,10 @@ exports.AdminGetUsers = async (req, res) => {
       : {},
     attributes: ["id", "name", "email", "role"],
   })
-
-  res.json(users)
+  return users
 }
+
+
 
 exports.getProfile = async (req, res) => {
   const user = await User.findByPk(req.user.id, {
@@ -21,13 +22,13 @@ exports.getProfile = async (req, res) => {
   res.json(user)
 }
 
+
+
 exports.updateProfile = async (req, res) => {
   const { name, email } = req.body
-
   await User.update(
     { name, email },
     { where: { id: req.user.id } }
   )
-
   res.json({ message: "Profile updated successfully" })
 }
