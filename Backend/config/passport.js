@@ -1,5 +1,5 @@
-const passport = require("passport");
-const GoogleStrategy = require("passport-google-oauth20").Strategy;
+const passport = require("passport")
+const GoogleStrategy = require("passport-google-oauth20").Strategy
 
 passport.use(
     new GoogleStrategy(
@@ -9,12 +9,11 @@ passport.use(
             callbackURL: process.env.GOOGLE_CALLBACK_URL
         },
         (accessToken, refreshToken, profile, done) => {
-            return done(null, profile);
+            return done(null, profile)
         }
     )
-);
+)
+passport.serializeUser((user, done) => done(null, user))
+passport.deserializeUser((user, done) => done(null, user))
 
-passport.serializeUser((user, done) => done(null, user));
-passport.deserializeUser((user, done) => done(null, user));
-
-module.exports = passport;
+module.exports = passport
