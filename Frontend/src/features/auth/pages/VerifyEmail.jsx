@@ -1,5 +1,5 @@
 import { useSearchParams } from "react-router-dom";
-import api from "@/lib/axios";
+import api from "../../../lib/axios";
 
 export default function VerifyEmail() {
   const [params] = useSearchParams();

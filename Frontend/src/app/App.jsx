@@ -1,17 +1,15 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
-import { AuthProvider } from "@/context/AuthContext"
-import ProtectedRoute from "@/app/ProtectedRoute"
-
-import Login from "@/features/auth/pages/Login"
-import Register from "@/features/auth/pages/Register"
-import VerifyEmail from "@/features/auth/pages/VerifyEmail"
-
-import AdminDashboard from "@/features/admin/pages/AdminDashboard"
-import UsersList from "@/features/admin/pages/UsersList"
+import VerifyEmail from "../features/auth/pages/VerifyEmail"
+import AdminDashboard from "../features/admin/pages/AdminDashboard"
+import UsersList from "../features/admin/pages/UsersList"
+import { AuthProvider } from "../context/AuthContext"
+import ProtectedRoute from "./ProtectedRoute"
+import Register from "../features/auth/pages/Register"
+import Login from "../features/auth/pages/Login"
 
 // Placeholder pages
 const ForgotPassword = () => <div>Forgot Password</div>
-const Unauthorized = () => <div>Unauthorized</div>
+const Unauthorized = () => <div>Unauthorized</div>  
 const Home = () => <div>Home</div>
 
 function App() {
@@ -39,7 +37,9 @@ function App() {
           />
 
           <Route
-            path="/admin/users" element={ <ProtectedRoute role="admin"> <UsersList /> </ProtectedRoute>} />
+            path="/admin/users" element={ <ProtectedRoute role="admin"> 
+            <UsersList /> 
+            </ProtectedRoute>} />
 
           {/* Catch-all */}
           <Route path="*" element={<Navigate to="/" />} />

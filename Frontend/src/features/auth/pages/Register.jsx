@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form"
-import api from "@/lib/axios"
+import api from "../../../lib/axios"
 
 export default function Register() {
   const { register, handleSubmit } = useForm()
