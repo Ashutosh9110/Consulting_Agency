@@ -22,7 +22,7 @@ export default function Login() {
         playsInline
         className="absolute inset-0 w-full h-full object-cover"
       >
-        <source src=""
+        <source src="https://res.cloudinary.com/djm65usjg/video/upload/v1765701099/5_cll6kd.mp4"
         type="video/mp4" />
       </video>
 

@@ -20,7 +20,7 @@ export default function Register() {
         playsInline
         className="absolute inset-0 w-full h-full object-cover"
       >
-        <source src="" 
+        <source src="https://res.cloudinary.com/djm65usjg/video/upload/v1765701095/4_q0hdn3.mp4" 
         type="video/mp4" />
       </video>
 
