@@ -1,35 +1,66 @@
-import Navbar from "../../../components/layout/Navbar"
-import Sidebar from "../../../components/layout/Sidebar"
+import { useEffect, useState } from "react"
+import api from "../../../lib/axios"
 
 export default function UsersList() {
+  const [users, setUsers] = useState([])
+  const [search, setSearch] = useState("")
+  const [page, setPage] = useState(1)
+  const [totalPages, setTotalPages] = useState(1)
+
+  useEffect(() => {
+    fetchUsers()
+  }, [page, search])
+
+  const fetchUsers = async () => {
+    const res = await api.get("/users/admin-getUsers", {
+      params: { page, limit: 5, search },
+    })
+    setUsers(res.data.data)
+    setTotalPages(res.data.pagination.totalPages)
+  }
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-800 text-white">
-      <Navbar />
-      <div className="flex pt-20">
-        <Sidebar />
+    <div className="p-6">
+      <h1 className="text-2xl font-bold mb-4">Users</h1>
 
-        <main className="flex-1 p-8">
-          <h1 className="text-3xl font-bold mb-6">Users</h1>
+      <input
+        type="text"
+        placeholder="Search by name or email"
+        value={search}
+        onChange={(e) => {
+          setSearch(e.target.value)
+          setPage(1)
+        }}
+        className="mb-4 px-4 py-2 border rounded w-full max-w-md"
+      />
 
-          <div className="bg-white/10 backdrop-blur-xl rounded-xl overflow-hidden">
-            <table className="w-full text-sm">
-              <thead className="bg-white/10">
-                <tr>
-                  <th className="text-left p-4">Name</th>
-                  <th className="text-left p-4">Email</th>
-                  <th className="text-left p-4">Role</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr className="border-t border-white/10 hover:bg-white/5">
-                  <td className="p-4">John Doe</td>
-                  <td className="p-4">john@example.com</td>
-                  <td className="p-4">User</td>
-                </tr>
-              </tbody>
-            </table>
+      <div className="space-y-3">
+        {users.map((u) => (
+          <div key={u.id} className="p-4 border rounded">
+            <p className="font-semibold">{u.name}</p>
+            <p className="text-sm text-gray-600">{u.email}</p>
           </div>
-        </main>
+        ))}
+      </div>
+
+      <div className="flex gap-2 mt-6">
+        <button
+          disabled={page === 1}
+          onClick={() => setPage(page - 1)}
+          className="px-4 py-2 border rounded disabled:opacity-50"
+        >
+          Prev
+        </button>
+        <span className="px-4 py-2">
+          Page {page} of {totalPages}
+        </span>
+        <button
+          disabled={page === totalPages}
+          onClick={() => setPage(page + 1)}
+          className="px-4 py-2 border rounded disabled:opacity-50"
+        >
+          Next
+        </button>
       </div>
     </div>
   )

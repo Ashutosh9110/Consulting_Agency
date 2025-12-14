@@ -25,7 +25,7 @@ app.use("/uploads", express.static("uploads"));
 app.use(errors())
 
 
-sequelize.sync({ alter: true })
+sequelize.sync()
     .then(() => console.log("MySQL connected & models synced"))
     .catch(err => console.error(err))
 

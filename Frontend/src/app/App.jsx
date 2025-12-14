@@ -9,7 +9,7 @@ import Login from "../features/auth/pages/Login"
 import Welcome from "../features/home/pages/Welcome"
 import ResetPassword from "../features/auth/pages/ResetPassword"
 import ForgotPassword from "../features/auth/pages/ForgotPassword"
-import Home from "../features/auth/pages/Home"
+import Home from "../features/home/pages/Home"
 
 // // Placeholder pages
 // const ForgotPassword = () => <div>Forgot Password</div>

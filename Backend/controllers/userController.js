@@ -3,14 +3,38 @@ const User = require("../models/User")
 
 
 exports.AdminGetUsers = async (req, res) => {
-  const { search } = req.query
-  const users = await User.findAll({
-    where: search
-      ? { email: { [Op.like]: `%${search}%` } }
-      : {},
-    attributes: ["id", "name", "email", "role"],
-  })
-  return users
+  try {
+    const page = parseInt(req.query.page) || 1
+    const limit = parseInt(req.query.limit) || 10
+    const search = req.query.search || ""
+    const offset = (page - 1) * limit
+
+    const { rows, count } = await User.findAndCountAll({
+      where: search
+        ? {
+            [Op.or]: [
+              { email: { [Op.like]: `%${search}%` } },
+              { name: { [Op.like]: `%${search}%` } },
+            ],
+          }
+        : {},
+      attributes: ["id", "name", "email", "role"],
+      limit,
+      offset,
+      order: [["createdAt", "DESC"]],
+    })
+    res.json({
+      data: rows,
+      pagination: {
+        total: count,
+        page,
+        limit,
+        totalPages: Math.ceil(count / limit),
+      },
+    })
+  } catch (err) {
+    res.status(500).json({ message: "Failed to fetch users" })
+  }
 }
 
 
