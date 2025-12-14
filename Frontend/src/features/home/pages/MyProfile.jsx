@@ -1,29 +1,127 @@
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import api from "../../../lib/axios"
 
 export default function MyProfile() {
   const { register, handleSubmit, setValue } = useForm()
+  const [userImage, setUserImage] = useState(null)
+  const [editing, setEditing] = useState(false)
 
   useEffect(() => {
-  console.log("TOKEN:", localStorage.getItem("accessToken"))
-    api.get("/users/me").then(res => {
-      setValue("name", res.data.name)
-      setValue("email", res.data.email)
-    })
+    const fetchProfile = async () => {
+      try {
+        const res = await api.get("/users/me")
+        setValue("name", res.data.name)
+        setValue("email", res.data.email)
+        setUserImage(res.data.profileImage || "/default-avatar.png")
+      } catch (err) {
+        console.error(err)
+      }
+    }
+    fetchProfile()
   }, [])
 
   const onSubmit = async (data) => {
-    await api.put("/users/me", data)
-    alert("Profile updated")
+    try {
+      const formData = new FormData()
+      formData.append("name", data.name)
+      formData.append("email", data.email)
+      if (data.password) formData.append("password", data.password)
+      if (data.profileImage && data.profileImage[0]) {
+        formData.append("profileImage", data.profileImage[0])
+      }
+
+      await api.put("/users/me", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      })
+      alert("Profile updated successfully")
+      setEditing(false)
+      if (data.profileImage && data.profileImage[0]) {
+        setUserImage(URL.createObjectURL(data.profileImage[0]))
+      }
+    } catch (err) {
+      console.error(err)
+      alert("Failed to update profile")
+    }
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <input {...register("name")} />
-      <input {...register("email")} />
-      <button>Save</button>
-    </form>
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black text-white px-4 sm:px-8 py-12 sm:py-16">
+      <section className="max-w-3xl mx-auto bg-white/10 backdrop-blur-xl rounded-2xl p-6 sm:p-10 shadow-2xl">
+        <div className="flex items-center gap-6 mb-6">
+          <img
+            src={userImage || "/default-avatar.png"}
+            alt="Profile"
+            className="w-24 h-24 rounded-full object-cover border-2 border-white"
+          />
+          <div className="flex-1">
+            <h2 className="text-2xl font-bold">{editing ? "Edit Profile" : "My Profile"}</h2>
+            {!editing && (
+              <button
+                onClick={() => setEditing(true)}
+                className="mt-2 px-4 py-2 bg-white text-black rounded-lg font-semibold hover:bg-gray-200 transition"
+              >
+                Edit Profile
+              </button>
+            )}
+          </div>
+        </div>
+
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          <div>
+            <label className="block mb-1">Name</label>
+            <input
+              {...register("name")}
+              disabled={!editing}
+              className={`w-full px-4 py-2 rounded-lg bg-white/20 text-white placeholder-gray-300 outline-none ${
+                editing ? "focus:ring-2 focus:ring-white" : "opacity-70 cursor-not-allowed"
+              }`}
+            />
+          </div>
+
+          <div>
+            <label className="block mb-1">Email</label>
+            <input
+              {...register("email")}
+              disabled={!editing}
+              className={`w-full px-4 py-2 rounded-lg bg-white/20 text-white placeholder-gray-300 outline-none ${
+                editing ? "focus:ring-2 focus:ring-white" : "opacity-70 cursor-not-allowed"
+              }`}
+            />
+          </div>
+
+          {editing && (
+            <>
+              <div>
+                <label className="block mb-1">Password</label>
+                <input
+                  {...register("password")}
+                  type="password"
+                  placeholder="Enter new password"
+                  className="w-full px-4 py-2 rounded-lg bg-white/20 text-white placeholder-gray-300 outline-none focus:ring-2 focus:ring-white"
+                />
+              </div>
+
+              <div>
+                <label className="block mb-1">Profile Image</label>
+                <input
+                  {...register("profileImage")}
+                  type="file"
+                  accept="image/*"
+                  className="text-white"
+                />
+              </div>
+
+              <button
+                type="submit"
+                className="mt-4 px-6 py-3 bg-white text-black rounded-lg font-semibold hover:bg-gray-200 transition"
+              >
+                Save Changes
+              </button>
+            </>
+          )}
+        </form>
+      </section>
+    </div>
   )
 }
-

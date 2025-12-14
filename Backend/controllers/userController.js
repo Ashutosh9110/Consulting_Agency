@@ -40,17 +40,29 @@ exports.AdminGetUsers = async (req, res) => {
 
 exports.getProfile = async (req, res) => {
   const user = await User.findByPk(req.user.id, {
-    attributes: ["id", "name", "email", "role"],
+    attributes: ["id", "name", "email", "role", "profileImage"],
   })
   res.json(user)
 }
 
 
 exports.updateProfile = async (req, res) => {
-  const { name, email } = req.body
-  await User.update(
-    { name, email },
-    { where: { id: req.user.id } }
-  )
-  res.json({ message: "Profile updated successfully" })
+  try {
+    const { name, email, password } = req.body
+    const updateData = { name, email }
+    if (password) {
+      updateData.password = await bcrypt.hash(password, 10)
+    }
+    if (req.file) {
+      updateData.profileImage = `/uploads/${req.file.filename}` // adjust according to your uploads folder
+    }
+    await User.update(updateData, { where: { id: req.user.id } })
+    const updatedUser = await User.findByPk(req.user.id, {
+      attributes: ["id", "name", "email", "role", "profileImage"],
+    })
+    res.json(updatedUser)
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ message: "Failed to update profile" })
+  }
 }

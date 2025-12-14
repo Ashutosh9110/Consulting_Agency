@@ -44,7 +44,7 @@ exports.signup = async (req, res) => {
 
     await sendMail({
         to: email,
-        subject: "Verify your email – Maxlence Consulting",
+        subject: "Verify your email - Maxlence Consulting",
         htmlContent: verifyEmailTemplate(verifyLink)
       })
 
