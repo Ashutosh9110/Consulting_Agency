@@ -31,7 +31,7 @@ exports.signup = async (req, res) => {
             name,
             email,
             password: hashed,
-            role
+            role: "user"
         })
         return res.status(201).json({ message: "User created", user })
     } catch (err) {

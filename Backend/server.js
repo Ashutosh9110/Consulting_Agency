@@ -1,3 +1,4 @@
+require("dotenv").config()
 const express = require("express")
 const sequelize = require("./config/sequelize")
 const authRoutes = require("./routes/authRoutes")
