@@ -6,6 +6,7 @@ import { AuthProvider } from "../context/AuthContext"
 import ProtectedRoute from "./ProtectedRoute"
 import Register from "../features/auth/pages/Register"
 import Login from "../features/auth/pages/Login"
+import Welcome from "../features/home/pages/Welcome"
 
 // Placeholder pages
 const ForgotPassword = () => <div>Forgot Password</div>
@@ -19,7 +20,7 @@ function App() {
         <Routes>
 
           {/* Public routes */}
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={<Welcome />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/verify-email" element={<VerifyEmail />} />
