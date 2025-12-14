@@ -11,7 +11,7 @@ export default function Welcome() {
         playsInline
         className="absolute inset-0 w-full h-full object-cover"
       >
-        <source src=""
+        <source src="https://res.cloudinary.com/djm65usjg/video/upload/v1765699624/1_dmhkb9.mp4"
          type="video/mp4" />
       </video>
 
