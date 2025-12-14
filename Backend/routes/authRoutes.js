@@ -10,6 +10,9 @@ router.post("/signup", upload.single("image"), validateSignup, signup)
 router.post("/login", validateLogin, login)
 router.post("/refresh-token", refreshToken)
 router.post("/verify-email", verifyEmail)
+router.post("/forgot-password", authController.forgotPassword)
+router.post("/reset-password", authController.resetPassword)
+
 
 router.get( "/google", passport.authenticate("google", { scope: ["profile", "email"] }))
 router.get( "/google/callback", passport.authenticate("google", { session: false }), googleAuthCallback)

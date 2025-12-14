@@ -131,3 +131,54 @@ exports.verifyEmail = async (req, res) => {
   await user.save()
   res.json({ message: "Email verified successfully" })
 }
+
+
+
+exports.forgotPassword = async (req, res) => {
+  const { email } = req.body
+
+  const user = await User.findOne({ where: { email } })
+  if (!user) {
+    return res.status(404).json({ message: "User not found" })
+  }
+
+  const token = crypto.randomBytes(32).toString("hex")
+
+  user.resetPasswordToken = token
+  user.resetPasswordExpires = Date.now() + 1000 * 60 * 30 // 30 mins
+  await user.save()
+
+  const resetLink = `http://localhost:5173/reset-password?token=${token}`
+
+  await sendMail({
+    to: email,
+    subject: "Reset your password",
+    htmlContent: `
+      <p>Click below to reset your password:</p>
+      <a href="${resetLink}">Reset Password</a>
+    `,
+  })
+
+  res.json({ message: "Password reset link sent to email" })
+}
+
+exports.resetPassword = async (req, res) => {
+  const { token, newPassword } = req.body
+
+  const user = await User.findOne({
+    where: {
+      resetPasswordToken: token,
+      resetPasswordExpires: { [Op.gt]: Date.now() },
+    },
+  })
+
+  if (!user) {
+    return res.status(400).json({ message: "Invalid or expired token" })
+  }
+
+  user.password = await bcrypt.hash(newPassword, 10)
+  user.resetPasswordToken = null
+  user.resetPasswordExpires = null
+  await user.save()
+  res.json({ message: "Password reset successful" })
+}

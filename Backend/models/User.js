@@ -25,7 +25,14 @@ const User = sequelize.define("User", {
     },
     emailVerificationToken: {
         type: DataTypes.STRING
+    },
+    resetPasswordToken: {
+        type: DataTypes.STRING,
+    },
+      resetPasswordExpires: {
+        type: DataTypes.DATE,
     }
+      
 });
 
 module.exports = User;
