@@ -12,24 +12,19 @@ export const AuthProvider = ({ children }) => {
     setUser(user)
     setIsAuthenticated(true)
   }
-
   const logout = () => {
     localStorage.removeItem("accessToken")
     setUser(null)
     setIsAuthenticated(false)
   }
-
   useEffect(() => {
     const token = localStorage.getItem("accessToken")
-
     if (!token) {
       setLoading(false)
       return
     }
-
     try {
       const payload = JSON.parse(atob(token.split(".")[1]))
-
       if (payload.exp * 1000 < Date.now()) {
         logout()
       } else {
