@@ -1,34 +1,34 @@
-const multer = require("multer")
-const path = require("path")
+    const multer = require("multer")
+    const path = require("path")
 
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, "uploads/")
-    },
-    filename: (req, file, cb) => {
-        cb(
-            null,
-            `${Date.now()}-${file.originalname.replace(/\s+/g, "")}`
+    const storage = multer.diskStorage({
+        destination: (req, file, cb) => {
+            cb(null, "uploads/")
+        },
+        filename: (req, file, cb) => {
+            cb(
+                null,
+                `${Date.now()}-${file.originalname.replace(/\s+/g, "")}`
+            )
+        }
+    })
+
+    const fileFilter = (req, file, cb) => {
+        const allowedTypes = /jpeg|jpg|png|pdf/
+        const ext = allowedTypes.test(
+            path.extname(file.originalname).toLowerCase()
         )
+        const mime = allowedTypes.test(file.mimetype)
+
+        if (ext && mime) {
+            cb(null, true)
+        } else {
+            cb(new Error("Only images or PDFs allowed"))
+        }
     }
-})
 
-const fileFilter = (req, file, cb) => {
-    const allowedTypes = /jpeg|jpg|png|pdf/
-    const ext = allowedTypes.test(
-        path.extname(file.originalname).toLowerCase()
-    )
-    const mime = allowedTypes.test(file.mimetype)
-
-    if (ext && mime) {
-        cb(null, true)
-    } else {
-        cb(new Error("Only images or PDFs allowed"))
-    }
-}
-
-exports.upload = multer({
-    storage,
-    limits: { fileSize: 5 * 1024 * 1024 },
-    fileFilter
-})
+    exports.upload = multer({
+        storage,
+        limits: { fileSize: 5 * 1024 * 1024 },
+        fileFilter
+    })

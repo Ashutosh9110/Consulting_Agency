@@ -14,7 +14,18 @@ const User = sequelize.define("User", {
         type: DataTypes.ENUM("user", "admin"),
         defaultValue: "user"
     },
-    googleId: { type: DataTypes.STRING, allowNull: true }
+    profileImage: {
+        type: DataTypes.STRING,
+        allowNull: true
+    },
+    googleId: { type: DataTypes.STRING, allowNull: true },
+    isEmailVerified: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false
+    },
+    emailVerificationToken: {
+        type: DataTypes.STRING
+    }
 });
 
 module.exports = User;

@@ -1,13 +1,13 @@
 import { useForm } from "react-hook-form"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import api from "../../../lib/axios"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 
 export default function Register() {
   const { register, handleSubmit } = useForm()
   const [preview, setPreview] = useState(null)
   const [loading, setLoading] = useState(false)
-
+  const navigate = useNavigate()
   const onSubmit = async (data) => {
     try {
       setLoading(true)
@@ -19,14 +19,23 @@ export default function Register() {
       formData.append("role", data.role)
       formData.append("image", data.image[0])
 
-      await api.post("/auth/signup", data)
+      await api.post("/auth/signup", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data"
+        }
+      })
       alert("Check your email to verify your account")
+      navigate("/login")
     } catch (err) {
       alert(err.response?.data?.message || "Registration failed")
     } finally {
       setLoading(false)
     }
   }
+
+    useEffect(() => {
+      return () => preview && URL.revokeObjectURL(preview);
+    }, [preview]);
   
 
   return (
@@ -58,6 +67,7 @@ export default function Register() {
               hidden
               onChange={(e) => setPreview(URL.createObjectURL(e.target.files[0]))}
             />
+            
             <img
               src={preview || "https://via.placeholder.com/100"}
               className="w-24 h-24 rounded-full object-cover border-2 border-white"
