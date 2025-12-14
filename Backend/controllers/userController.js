@@ -14,14 +14,12 @@ exports.AdminGetUsers = async (req, res) => {
 }
 
 
-
 exports.getProfile = async (req, res) => {
   const user = await User.findByPk(req.user.id, {
     attributes: ["id", "name", "email", "role"],
   })
   res.json(user)
 }
-
 
 
 exports.updateProfile = async (req, res) => {

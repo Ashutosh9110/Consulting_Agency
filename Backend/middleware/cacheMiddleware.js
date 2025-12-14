@@ -1,18 +1,18 @@
 const redisClient = require("../lib/redis")
 
-const cache = (keyPrefix) => {
+const cache = (prefix) => {
   return async (req, res, next) => {
-    const key = keyPrefix + (req.query.search || "all")
+    const key = prefix + (req.query.search || "all")
 
     try {
-      const cachedData = await redisClient.get(key)
-      if (cachedData) {
-        return res.json(JSON.parse(cachedData))
+      const cached = await redisClient.get(key)
+      if (cached) {
+        return res.json(JSON.parse(cached))
       }
       req.cacheKey = key
       next()
     } catch (err) {
-      console.error("Redis error:", err)
+      console.error("Cache error:", err)
       next()
     }
   }
