@@ -13,6 +13,7 @@ import ForgotPassword from "../features/auth/pages/ForgotPassword"
 import Home from "../features/home/pages/Home"
 import MyProfile from "../features/home/pages/MyProfile"
 import OAuthSuccess from "../features/auth/pages/OAuthSuccess"
+import ContactUs from "../features/home/pages/ContactUs"
 
 const Unauthorized = () => <div>Unauthorized</div>  
 
@@ -41,6 +42,7 @@ export default function App() {
           <Route path="/unauthorized" element={<Unauthorized />} />
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/oauth-success" element={<OAuthSuccess />} />
+          <Route path="/contact" element={<ContactUs />} />
 
           {/* Admin protected routes */}
           <Route path="/admin" element={ <ProtectedRoute role="admin"> <AdminDashboard /> </ProtectedRoute> } />
