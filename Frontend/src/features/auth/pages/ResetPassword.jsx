@@ -32,7 +32,7 @@ export default function ResetPassword() {
         className="absolute inset-0 w-full h-full object-cover"
       >
         <source 
-          src="https://res.cloudinary.com/YOUR_CLOUDINARY_VIDEO.mp4" 
+          src="https://res.cloudinary.com/djm65usjg/video/upload/v1763281058/signup2_eaho2j.mp4" 
           type="video/mp4" 
         />
       </video>
