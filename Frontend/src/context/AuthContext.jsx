@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react"
+import api from "../lib/axios"
 
 const AuthContext = createContext(null)
 
@@ -8,31 +9,43 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true)
 
   const login = (data) => {
-    setUser(data.user)
+    localStorage.setItem("accessToken", data.accessToken)
     setToken(data.accessToken)
-
-    localStorage.setItem("user", JSON.stringify(data.user))
-    localStorage.setItem("token", data.accessToken)
+    setUser(data.user)
   }
 
   const logout = () => {
-    localStorage.removeItem("user")
-    localStorage.removeItem("token")
+    localStorage.removeItem("accessToken")
     setUser(null)
     setToken(null)
   }
 
+
   useEffect(() => {
-    const storedUser = localStorage.getItem("user")
-    const storedToken = localStorage.getItem("token")
+    let mounted = true
+    const initAuth = async () => {
+      const storedToken = localStorage.getItem("accessToken")
+      if (!storedToken) {
+        setLoading(false)
+        return
+      }
 
-    if (storedUser && storedToken) {
-      setUser(JSON.parse(storedUser))
-      setToken(storedToken)
+      try {
+        setToken(storedToken)
+        const res = await api.get("/users/me")
+        if (mounted) setUser(res.data)
+      } catch (err) {
+        logout()
+      } finally {
+        if (mounted) setLoading(false)
+      }
     }
-
-    setLoading(false)
+    initAuth()
+    return () => {
+      mounted = false
+    }
   }, [])
+
 
   return (
     <AuthContext.Provider

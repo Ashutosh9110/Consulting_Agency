@@ -11,18 +11,15 @@ export default function Login() {
   const onSubmit = async (data) => {
     try {
       const res = await api.post("/auth/login", data)
-      localStorage.setItem("accessToken", res.data.accessToken)
       login(res.data)
+  
       const role = res.data.user.role
-      if (role === "admin") {
-        navigate("/admin")
-      } else {
-        navigate("/home")
-      }
+      navigate(role === "admin" ? "/admin" : "/home")
     } catch (err) {
-      alert(err.response?.data?.message || "Login failed. Please try again.")
+      alert(err.response?.data?.message || "Login failed")
     }
   }
+  
 
   return (
     <div className="relative min-h-screen flex items-center justify-center overflow-hidden">

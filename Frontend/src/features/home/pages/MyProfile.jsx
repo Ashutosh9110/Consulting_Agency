@@ -7,17 +7,24 @@ export default function MyProfile() {
   const [userImage, setUserImage] = useState(null)
   const [editing, setEditing] = useState(false)
 
-  useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const res = await api.get("/users/me")
-        setValue("name", res.data.name)
-        setValue("email", res.data.email)
-        setUserImage(res.data.profileImage || "/default-avatar.png")
-      } catch (err) {
-        console.error(err)
-      }
+  const fetchProfile = async () => {
+    try {
+      const res = await api.get("/users/me")
+      setValue("name", res.data.name)
+      setValue("email", res.data.email)
+
+      // IMPORTANT: backend already returns `/uploads/xxx.jpg`
+      setUserImage(
+        res.data.profileImage
+          ? `${import.meta.env.VITE_BACKEND_URL.replace("/api", "")}${res.data.profileImage}`
+          : "/default-avatar.png"
+      )
+    } catch (err) {
+      console.error(err)
     }
+  }
+
+  useEffect(() => {
     fetchProfile()
   }, [])
 
@@ -37,7 +44,7 @@ export default function MyProfile() {
       alert("Profile updated successfully")
       setEditing(false)
       if (data.profileImage && data.profileImage[0]) {
-        setUserImage(URL.createObjectURL(data.profileImage[0]))
+        await fetchProfile();
       }
     } catch (err) {
       console.error(err)

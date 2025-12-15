@@ -1,9 +1,10 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
+import { useAuth } from "../context/AuthContext"
+import ProtectedRoute from "./ProtectedRoute"
+
 import VerifyEmail from "../features/auth/pages/VerifyEmail"
 import AdminDashboard from "../features/admin/pages/AdminDashboard"
 import UsersList from "../features/admin/pages/UsersList"
-import { AuthProvider } from "../context/AuthContext"
-import ProtectedRoute from "./ProtectedRoute"
 import Register from "../features/auth/pages/Register"
 import Login from "../features/auth/pages/Login"
 import Welcome from "../features/home/pages/Welcome"
@@ -14,10 +15,20 @@ import MyProfile from "../features/home/pages/MyProfile"
 
 const Unauthorized = () => <div>Unauthorized</div>  
 
-function App() {
+export default function App() {
+  const { loading } = useAuth()
+
+  if (loading) {
+    return (
+      <div className="h-screen flex items-center justify-center">
+        Loading...
+      </div>
+    )
+  }
+
+
   return (
-    <BrowserRouter>
-      <AuthProvider>
+      <BrowserRouter>
         <Routes>
 
           {/* Public routes */}
@@ -39,9 +50,9 @@ function App() {
           <Route path="*" element={<Navigate to="/" />} />
 
         </Routes>
-      </AuthProvider>
     </BrowserRouter>
   )
 }
 
-export default App
+
+
