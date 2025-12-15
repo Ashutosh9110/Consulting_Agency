@@ -3,7 +3,7 @@ const verifyEmailTemplate = (link) => `
   <div style="font-family:Arial;background:#f9fafb;padding:30px;">
     <div style="max-width:600px;margin:auto;background:white;border-radius:10px;padding:30px;">
       <h2 style="color:#0f172a;text-align:center;">
-        Welcome to Maxlence Consulting
+        Welcome to ABC Consultancy
       </h2>
 
       <p style="font-size:15px;color:#334155;">
@@ -25,7 +25,7 @@ const verifyEmailTemplate = (link) => `
       <hr style="margin:20px 0"/>
 
       <p style="font-size:12px;color:#94a3b8;text-align:center;">
-        © ${new Date().getFullYear()} Maxlence Consulting · Digital Growth Experts
+        © ${new Date().getFullYear()} ABC Consultancy · Digital Growth Experts
       </p>
     </div>
   </div>

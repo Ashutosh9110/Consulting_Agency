@@ -76,7 +76,7 @@ export default function Register() {
         </div>
 
         <p className="text-center text-gray-300 mb-6">
-          Get started with Maxlence
+          Get started with ABC consultancy
         </p>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">

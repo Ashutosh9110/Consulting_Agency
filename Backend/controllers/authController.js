@@ -40,11 +40,11 @@ exports.signup = async (req, res) => {
       emailVerificationToken: token
     })
 
-    const verifyLink = `http://localhost:5173/verify-email?token=${token}`
+    const verifyLink = `https://consultancy-agency.netlify.app/verify-email?token=${token}`
 
     await sendMail({
         to: email,
-        subject: "Verify your email - Maxlence Consulting",
+        subject: "Verify your email - ABC Consultancy",
         htmlContent: verifyEmailTemplate(verifyLink)
       })
 
@@ -160,7 +160,7 @@ exports.forgotPassword = async (req, res) => {
   const resetLink = `http://localhost:5173/reset-password?token=${token}`
   await sendMail({
     to: email,
-    subject: "Reset your password – Maxlence Consulting",
+    subject: "Reset your password – ABC Consultancy Consulting",
     htmlContent: `
       <p>Hello ${user.name},</p>
       <p>Click the link below to reset your password. This link is valid for 1 hour.</p>

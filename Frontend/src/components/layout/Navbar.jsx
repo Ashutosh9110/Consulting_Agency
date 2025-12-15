@@ -15,7 +15,7 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center text-white">
 
         <Link to="/" className="text-xl font-bold tracking-wide">
-          Maxlence
+        ABC consultancy
         </Link>
         <div className="flex items-center gap-6">
           {user && (

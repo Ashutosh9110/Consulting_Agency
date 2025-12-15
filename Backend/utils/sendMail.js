@@ -6,7 +6,7 @@ exports.sendMail = async ({ to, subject, htmlContent }) => {
       "https://api.brevo.com/v3/smtp/email",
       {
         sender: {
-          name: "Maxlence Consulting",
+          name: "ABC Consulting",
           email: "ashusingh19911082@gmail.com",
         },
         to: [{ email: to }],

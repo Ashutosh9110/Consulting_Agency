@@ -19,7 +19,7 @@ export default function Welcome() {
       <div className="relative z-10 flex h-full items-center justify-center text-center px-6">
         <div className="max-w-xl text-white space-y-6">
           <h1 className="text-4xl md:text-5xl font-bold">
-            Welcome to Maxlence
+            Welcome to ABC consultancy
           </h1>
 
           <p className="text-lg text-gray-200">
