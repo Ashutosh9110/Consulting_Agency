@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react"
 import api from "../lib/axios"
+import * as jwtDecode from "jwt-decode"
 
 const AuthContext = createContext(null)
 
@@ -9,22 +10,23 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true)
 
   const login = (data) => {
-    localStorage.setItem("accessToken", data.accessToken)
-    setToken(data.accessToken)
+    localStorage.setItem("token", data.token)
+    setToken(data.token)
     setUser(data.user)
   }
 
   const logout = () => {
-    localStorage.removeItem("accessToken")
-    setUser(null)
+    localStorage.removeItem("token")
     setToken(null)
+    setUser(null)
   }
 
 
   useEffect(() => {
     let mounted = true
+
     const initAuth = async () => {
-      const storedToken = localStorage.getItem("accessToken")
+      const storedToken = localStorage.getItem("token")
       if (!storedToken) {
         setLoading(false)
         return
@@ -32,9 +34,14 @@ export const AuthProvider = ({ children }) => {
 
       try {
         setToken(storedToken)
-        const res = await api.get("/users/me")
+        const decoded = jwtDecode(storedToken)
+        setUser({ id: decoded.id, role: decoded.role, email: decoded.email })
+        const res = await api.get("/users/me", {
+          headers: { Authorization: `Bearer ${storedToken}` },
+        })
         if (mounted) setUser(res.data)
       } catch (err) {
+        console.error("Auth initialization error:", err)
         logout()
       } finally {
         if (mounted) setLoading(false)

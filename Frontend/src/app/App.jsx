@@ -12,6 +12,7 @@ import ResetPassword from "../features/auth/pages/ResetPassword"
 import ForgotPassword from "../features/auth/pages/ForgotPassword"
 import Home from "../features/home/pages/Home"
 import MyProfile from "../features/home/pages/MyProfile"
+import OAuthSuccess from "../features/auth/pages/OAuthSuccess"
 
 const Unauthorized = () => <div>Unauthorized</div>  
 
@@ -39,6 +40,7 @@ export default function App() {
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/unauthorized" element={<Unauthorized />} />
           <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/oauth-success" element={<OAuthSuccess />} />
 
           {/* Admin protected routes */}
           <Route path="/admin" element={ <ProtectedRoute role="admin"> <AdminDashboard /> </ProtectedRoute> } />

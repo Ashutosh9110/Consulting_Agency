@@ -69,7 +69,7 @@ export default function Register() {
             />
             
             <img
-              src={preview || "https://via.placeholder.com/100"}
+              src={preview || "/avatar.png"}
               className="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover border-2 border-white"
             />
           </label>

@@ -16,7 +16,7 @@ export default function Login() {
       const role = res.data.user.role
       navigate(role === "admin" ? "/admin" : "/home")
     } catch (err) {
-      alert(err.response?.data?.message || "Login failed")
+      alert(err.response?.data?.message)
     }
   }
   
@@ -62,6 +62,16 @@ export default function Login() {
           >
             Login
           </button>
+
+          <button
+            onClick={() =>
+              window.location.href = `${import.meta.env.VITE_BACKEND_URL}/auth/google`
+            }
+            className="w-full py-3 bg-red-500 text-white rounded-lg"
+          >
+            Continue with Google
+          </button>
+
         </form>
         <div className="mt-6 text-center text-sm text-gray-300">
           Don’t have an account?{" "}

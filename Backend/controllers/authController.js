@@ -100,21 +100,32 @@ exports.refreshToken = (req, res) => {
 
 exports.googleAuthCallback = async (req, res) => {
   try {
+    console.log("Google user profile:", req.user)
     const googleProfile = req.user
-    let user = await User.findOne({ where: { googleId: googleProfile.id } })
+    let user = await User.findOne({ where: { email: googleProfile.emails[0].value } })
+    console.log("Found user in DB:", user)
     if (!user) {
       user = await User.create({
         name: googleProfile.displayName,
         email: googleProfile.emails[0].value,
         googleId: googleProfile.id,
         role: "user",
+        profileImage: googleProfile.photos?.[0]?.value || null,
       })
+      console.log("Created new user:", user)
     }
     const accessToken = generateAccessToken(user)
+    console.log("Generated access token:", accessToken);
     const refreshToken = generateRefreshToken(user)
-    return res.json({ accessToken, refreshToken, user })
+
+    const redirectUrl = `${process.env.FRONTEND_URL}/oauth-success?token=${accessToken}`;
+    console.log("Redirecting to frontend:", redirectUrl);
+    res.redirect(redirectUrl);
+
   } catch (err) {
-    return res.status(500).json({ message: err.message })
+    console.error(err)
+    console.error("OAuth callback error:", err)
+    res.redirect(`${process.env.FRONTEND_URL}/login?error=oauth_failed`)
   }
 }
 

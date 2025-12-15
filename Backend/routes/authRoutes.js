@@ -5,7 +5,7 @@ const { signup, login, refreshToken, googleAuthCallback, verifyEmail, forgotPass
 const { validateSignup, validateLogin } = require("../middleware/validate")
 const { upload } = require("../middleware/uploadMiddleware")
 
-
+// -------------------- AUTH --------------------
 router.post("/signup", upload.single("image"), validateSignup, signup)
 router.post("/login", validateLogin, login)
 router.post("/refresh-token", refreshToken)
@@ -13,9 +13,9 @@ router.post("/verify-email", verifyEmail)
 router.post("/forgot-password", forgotPassword)
 router.post("/reset-password", resetPassword)
 
-
-router.get( "/google", passport.authenticate("google", { scope: ["profile", "email"] }))
-router.get( "/google/callback", passport.authenticate("google", { session: false }), googleAuthCallback)
+// -------------------- GOOGLE OAUTH --------------------
+router.get( "/google", passport.authenticate("google", { scope: ["profile", "email"], session: false }))
+router.get( "/google/callback", passport.authenticate("google", { session: false, failureRedirect: `${process.env.FRONTEND_URL}/login` }), googleAuthCallback)
 
 
 module.exports = router

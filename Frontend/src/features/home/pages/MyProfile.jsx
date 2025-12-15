@@ -17,7 +17,7 @@ export default function MyProfile() {
       setUserImage(
         res.data.profileImage
           ? `${import.meta.env.VITE_BACKEND_URL.replace("/api", "")}${res.data.profileImage}`
-          : "/default-avatar.png"
+          : "/avatar.png"
       )
     } catch (err) {
       console.error(err)
@@ -57,7 +57,7 @@ export default function MyProfile() {
       <section className="max-w-3xl mx-auto bg-white/10 backdrop-blur-xl rounded-2xl p-6 sm:p-10 shadow-2xl">
         <div className="flex items-center gap-6 mb-6">
           <img
-            src={userImage || "/default-avatar.png"}
+            src={userImage || "/avatar.png"}
             alt="Profile"
             className="w-24 h-24 rounded-full object-cover border-2 border-white"
           />
