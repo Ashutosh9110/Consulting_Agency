@@ -53,7 +53,7 @@ export default function Home() {
       </section>
 
       <footer className="mt-24 text-center text-gray-400 text-sm">
-        © {new Date().getFullYear()} Maxlence Consulting. All rights reserved.
+        © {new Date().getFullYear()} ABC Consulting. All rights reserved.
       </footer>
     </div>
   )

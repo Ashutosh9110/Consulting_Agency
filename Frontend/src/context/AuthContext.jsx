@@ -10,8 +10,9 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true)
 
   const login = (data) => {
-    localStorage.setItem("token", data.token)
-    setToken(data.token)
+    const token = data.accessToken || data.token
+    localStorage.setItem("token", token)
+    setToken(token)
     setUser(data.user)
   }
 

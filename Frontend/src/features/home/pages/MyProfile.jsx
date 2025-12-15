@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import api from "../../../lib/axios"
+import { useNavigate } from "react-router-dom"
 
 export default function MyProfile() {
   const { register, handleSubmit, setValue } = useForm()
   const [userImage, setUserImage] = useState(null)
   const [editing, setEditing] = useState(false)
+  const navigate = useNavigate()
 
   const fetchProfile = async () => {
     try {
@@ -13,7 +15,6 @@ export default function MyProfile() {
       setValue("name", res.data.name)
       setValue("email", res.data.email)
 
-      // IMPORTANT: backend already returns `/uploads/xxx.jpg`
       setUserImage(
         res.data.profileImage
           ? `${import.meta.env.VITE_BACKEND_URL.replace("/api", "")}${res.data.profileImage}`
@@ -54,6 +55,13 @@ export default function MyProfile() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black text-white px-4 sm:px-8 py-12 sm:py-16">
+      <button
+        onClick={() => navigate("/home")}
+        className="mb-6 inline-flex items-center gap-2 text-white border border-white/60 px-4 py-2 rounded-lg hover:bg-white hover:text-black transition cursor-pointer"
+      >
+        ← Back to Home
+      </button>
+
       <section className="max-w-3xl mx-auto bg-white/10 backdrop-blur-xl rounded-2xl p-6 sm:p-10 shadow-2xl">
         <div className="flex items-center gap-6 mb-6">
           <img

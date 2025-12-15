@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form"
 import api from "../../../lib/axios"
-import { useAuth } from "../../../context/AuthContext"
 import { Link, useNavigate } from "react-router-dom"
+import { useAuth } from "../../../context/AuthContext"
 
 export default function Login() {
   const { register, handleSubmit } = useForm()
@@ -65,9 +65,9 @@ export default function Login() {
 
           <button
             onClick={() =>
-              window.location.href = `${import.meta.env.VITE_BACKEND_URL}/auth/google`
+              window.open(`${import.meta.env.VITE_BACKEND_URL}/auth/google`, "_self")
             }
-            className="w-full py-3 bg-red-500 text-white rounded-lg"
+            className="w-full py-3 bg-gray-500 text-white rounded-lg"
           >
             Continue with Google
           </button>
