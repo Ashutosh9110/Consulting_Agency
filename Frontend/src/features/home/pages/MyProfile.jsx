@@ -7,6 +7,7 @@ export default function MyProfile() {
   const { register, handleSubmit, setValue } = useForm()
   const [userImage, setUserImage] = useState(null)
   const [editing, setEditing] = useState(false)
+  const [preview, setPreview] = useState(null)
   const navigate = useNavigate()
 
   const fetchProfile = async () => {
@@ -28,6 +29,13 @@ export default function MyProfile() {
   useEffect(() => {
     fetchProfile()
   }, [])
+
+  useEffect(() => {
+    return () => {
+      if (preview) URL.revokeObjectURL(preview)
+    }
+  }, [preview])
+  
 
   const onSubmit = async (data) => {
     try {
@@ -64,17 +72,36 @@ export default function MyProfile() {
 
       <section className="max-w-3xl mx-auto bg-white/10 backdrop-blur-xl rounded-2xl p-6 sm:p-10 shadow-2xl">
         <div className="flex items-center gap-6 mb-6">
-          <img
-            src={userImage || "/avatar.png"}
-            alt="Profile"
-            className="w-24 h-24 rounded-full object-cover border-2 border-white"
-          />
+        <div className="relative">
+          <label className={editing ? "cursor-pointer" : ""}>
+            {editing && (
+              <input
+                type="file"
+                accept="image/*"
+                {...register("profileImage")}
+                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                onChange={(e) => {
+                  if (e.target.files?.[0]) {
+                    setPreview(URL.createObjectURL(e.target.files[0]))
+                  }
+                }}
+              />
+            )}
+
+            <img
+              src={preview || userImage || "/avatar.png"}
+              alt="Profile"
+              className="w-24 h-24 rounded-full object-cover border-2 border-white"
+            />
+          </label>
+        </div>
+
           <div className="flex-1">
             <h2 className="text-2xl font-bold">{editing ? "Edit Profile" : "My Profile"}</h2>
             {!editing && (
               <button
                 onClick={() => setEditing(true)}
-                className="mt-2 px-4 py-2 bg-white text-black rounded-lg font-semibold hover:bg-gray-200 transition"
+                className="mt-2 px-4 py-2 bg-white text-black rounded-lg font-semibold hover:bg-gray-200 transition cursor-pointer"
               >
                 Edit Profile
               </button>
@@ -116,20 +143,9 @@ export default function MyProfile() {
                   className="w-full px-4 py-2 rounded-lg bg-white/20 text-white placeholder-gray-300 outline-none focus:ring-2 focus:ring-white"
                 />
               </div>
-
-              <div>
-                <label className="block mb-1">Profile Image</label>
-                <input
-                  {...register("profileImage")}
-                  type="file"
-                  accept="image/*"
-                  className="text-white"
-                />
-              </div>
-
               <button
                 type="submit"
-                className="mt-4 px-6 py-3 bg-white text-black rounded-lg font-semibold hover:bg-gray-200 transition"
+                className="mt-4 px-6 py-3 bg-white text-black rounded-lg font-semibold hover:bg-gray-200 transition cursor-pointer"
               >
                 Save Changes
               </button>

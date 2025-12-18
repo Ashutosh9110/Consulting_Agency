@@ -8,7 +8,6 @@ export default function Register() {
   const [preview, setPreview] = useState(null)
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
-
   const onSubmit = async (data) => {
     try {
       setLoading(true)
@@ -18,13 +17,13 @@ export default function Register() {
       formData.append("email", data.email)
       formData.append("password", data.password)
       formData.append("role", data.role)
+      formData.append("image", data.image[0])
 
-      if (data.image instanceof FileList && data.image.length > 0) {
-        formData.append("image", data.image[0])
-      }
-      console.log("IMAGE FIELD:", data.image)
-
-      await api.post("/auth/signup", formData)
+      await api.post("/auth/signup", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data"
+        }
+      })
       alert("Check your email to verify your account")
       navigate("/login")
     } catch (err) {
@@ -57,24 +56,24 @@ export default function Register() {
       <div className="relative z-10 w-full max-w-md bg-white/10 backdrop-blur-xs rounded-2xl shadow-2xl p-8 text-white">
         <h2 className="text-3xl font-bold text-center mb-2">
           Create Account
-        </h2>
+        </h2> 
 
         <div className="flex justify-center mb-4">
-          <label className="cursor-pointer">
-          <input
-            type="file"
-            accept="image/*"
-            {...register("image")}
-            onChange={(e) => {
-              if (e.target.files?.[0]) {
-                setPreview(URL.createObjectURL(e.target.files[0]))
-              }
-            }}
-          />
-
-            
+          <label className="relative cursor-pointer">
+            <input
+              type="file"
+              accept="image/*"
+              {...register("image")}
+              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+              onChange={(e) => {
+                if (e.target.files?.[0]) {
+                  setPreview(URL.createObjectURL(e.target.files[0]))
+                }
+              }}
+            />
             <img
               src={preview || "/avatar.png"}
+              alt="Profile"
               className="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover border-2 border-white"
             />
           </label>

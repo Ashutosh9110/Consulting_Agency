@@ -18,6 +18,7 @@ export const AuthProvider = ({ children }) => {
 
   const logout = () => {
     localStorage.removeItem("token")
+    localStorage.removeItem("refreshToken")
     setToken(null)
     setUser(null)
   }
@@ -29,7 +30,7 @@ export const AuthProvider = ({ children }) => {
     const initAuth = async () => {
       const storedToken = localStorage.getItem("token")
       if (!storedToken) {
-        setLoading(false)
+        if (mounted) setLoading(false)
         return
       }
 

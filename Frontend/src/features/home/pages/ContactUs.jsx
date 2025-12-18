@@ -9,7 +9,7 @@ export default function ContactUs() {
       {/* Back Button */}
       <button
         onClick={() => navigate("/home")}
-        className="mb-8 inline-flex items-center gap-2 text-white border border-white/60 px-4 py-2 rounded-lg hover:bg-white hover:text-black transition"
+        className="mb-8 inline-flex items-center gap-2 text-white border border-white/60 px-4 py-2 rounded-lg hover:bg-white hover:text-black transition cursor-pointer"
       >
         ← Back to Home
       </button>
@@ -93,7 +93,8 @@ export default function ContactUs() {
 
             <button
               type="button"
-              className="w-full mt-2 px-6 py-3 border border-white/60 rounded-lg text-white hover:bg-white hover:text-black transition"
+              onClick={() => navigate("/contact-success")}
+              className="w-full mt-2 px-6 py-3 border border-white/60 rounded-lg text-white hover:bg-white hover:text-black transition cursor-pointer"
             >
               Send Message
             </button>

@@ -14,6 +14,8 @@ import Home from "../features/home/pages/Home"
 import MyProfile from "../features/home/pages/MyProfile"
 import OAuthSuccess from "../features/auth/pages/OAuthSuccess"
 import ContactUs from "../features/home/pages/ContactUs"
+import AppLayout from "../layouts/AppLayout"
+import ContactSuccess from "../features/home/pages/ContactSuccess"
 
 const Unauthorized = () => <div>Unauthorized</div>  
 
@@ -42,14 +44,16 @@ export default function App() {
           <Route path="/unauthorized" element={<Unauthorized />} />
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/oauth-success" element={<OAuthSuccess />} />
-          <Route path="/contact" element={<ContactUs />} />
 
+          <Route element={<AppLayout />}>
+            <Route path="/contact" element={<ContactUs />} />
+            <Route path="/contact-success" element={<ContactSuccess />} />
           {/* Admin protected routes */}
-          <Route path="/admin" element={ <ProtectedRoute role="admin"> <AdminDashboard /> </ProtectedRoute> } />
-          <Route path="/home" element={ <ProtectedRoute role="user"> <Home /> </ProtectedRoute> } />
-          <Route path="/admin/users" element={ <ProtectedRoute role="admin"> <UsersList /> </ProtectedRoute>} />
-          <Route path="/my-profile" element={ <ProtectedRoute> <MyProfile /> </ProtectedRoute> } />
-
+            <Route path="/admin" element={ <ProtectedRoute role="admin"> <AdminDashboard /> </ProtectedRoute> } />
+            <Route path="/home" element={ <ProtectedRoute role="user"> <Home /> </ProtectedRoute> } />
+            <Route path="/admin/users" element={ <ProtectedRoute role="admin"> <UsersList /> </ProtectedRoute>} />
+            <Route path="/my-profile" element={ <ProtectedRoute> <MyProfile /> </ProtectedRoute> } />
+          </Route>
           {/* Catch-all */}
           <Route path="*" element={<Navigate to="/" />} />
 
