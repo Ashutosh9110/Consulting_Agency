@@ -53,6 +53,9 @@
       console.log("Railway MySQL connected")
       await sequelize.sync()
       console.log("Models synced")
+      sequelize.query("SELECT DATABASE()").then(([res]) => {
+        console.log("Connected DB:", res[0]["DATABASE()"])
+      })
       app.listen(PORT, () => {
         console.log(`Server running on port ${PORT}`)
       })

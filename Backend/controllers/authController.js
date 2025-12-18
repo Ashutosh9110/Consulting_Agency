@@ -4,6 +4,9 @@ const User = require("../models/User")
 const crypto = require("crypto")
 const { sendMail } = require("../utils/sendMail")
 const { verifyEmailTemplate } = require("../utils/emailTemplates")
+const { verifyEmail } = require("../utils/verifyEmail")
+const { resetPassword } = require("../utils/resetPassword")
+const { getFrontendUrl } = require("../utils/getFrontendUrl")
 
 const generateAccessToken = (user) => {
   // console.log("JWT_SECRET:", process.env.JWT_SECRET)
@@ -26,6 +29,7 @@ exports.signup = async (req, res) => {
     const { name, email, password, role } = req.body
     // console.log("req body:", req.body)
     const exists = await User.findOne({ where: { email } })
+    console.log("Signup email exists check:", exists?.email, exists?.id)
     if (exists) {
       return res.status(400).json({ message: "Email already exists" })
     }
@@ -51,12 +55,12 @@ exports.signup = async (req, res) => {
     res.status(201).json({
       message: "Registration successful. Please verify your email."
     })
-
   } catch (err) {
     console.error("signup error:", err)
     return res.status(500).json({ message: err.message })
   }
 }
+
 
 exports.login = async (req, res) => {
   try {
@@ -110,6 +114,7 @@ exports.googleAuthCallback = async (req, res) => {
         email: googleProfile.emails[0].value,
         googleId: googleProfile.id,
         role: "user",
+        isEmailVerified: true,
         profileImage: googleProfile.photos?.[0]?.value || null,
       })
       console.log("Created new user:", user)
@@ -130,18 +135,17 @@ exports.googleAuthCallback = async (req, res) => {
 }
 
 exports.verifyEmail = async (req, res) => {
-  const { token } = req.body
-  const user = await User.findOne({
-    where: { emailVerificationToken: token },
-  })
-  if (!user) {
-    return res.status(400).json({ message: "Invalid or expired token" })
+  try {
+    const token = req.body.token || req.query.token
+    await verifyEmail(token)
+
+    res.json({ message: "Email verified successfully" })
+  } catch (err) {
+    res.status(400).json({ message: err.message })
   }
-  user.isEmailVerified = true
-  user.emailVerificationToken = null
-  await user.save()
-  res.json({ message: "Email verified successfully" })
 }
+
+
 
 
 
@@ -157,7 +161,7 @@ exports.forgotPassword = async (req, res) => {
   user.passwordResetExpires = Date.now() + 3600 * 1000 // 1 hour
   await user.save()
 
-  const resetLink = `http://localhost:5173/reset-password?token=${token}`
+  const resetLink = `https://consultancy-agency.netlify.app/reset-password?token=${token}`
   await sendMail({
     to: email,
     subject: "Reset your password – ABC Consultancy Consulting",
@@ -173,29 +177,16 @@ exports.forgotPassword = async (req, res) => {
 
 exports.resetPassword = async (req, res) => {
   try {
-  const { token, password } = req.body
-  const user = await User.findOne({ where: { passwordResetToken: token }})
-  if (!user || user.passwordResetExpires < Date.now()) {
-    return res.status(400).json({ message: "Invalid or expired token" })
+    const { token, password } = req.body
+    await resetPassword(token, password)
+
+    res.json({ message: "Password reset successfully" })
+  } catch (err) {
+    console.error("resetPassword error:", err)
+    res.status(400).json({ message: err.message })
   }
-
-  const isSamePassword = await bcrypt.compare(password, user.password);
-  if (isSamePassword) {
-    return res.status(400).json({ message: "New password cannot be same as the old password" });
-  }
-
-  user.password = await bcrypt.hash(password, 10)
-  user.passwordResetToken = null
-  user.passwordResetExpires = null
-  await user.save()
-
-  res.json({ message: "Password reset successfully" })
-} catch (err) {
-  
-  console.error("resetPassword error:", err);
-  res.status(500).json({ message: "Something went wrong" });
 }
-}
+
 
 
 
