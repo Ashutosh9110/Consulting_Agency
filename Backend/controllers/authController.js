@@ -2,13 +2,11 @@ const bcrypt = require("bcrypt")
 const jwt = require("jsonwebtoken")
 const User = require("../models/User")
 const crypto = require("crypto")
-const { sendMail } = require("../utils/sendMail")
-const { verifyEmailTemplate } = require("../utils/emailTemplates")
 const { verifyEmail } = require("../utils/verifyEmail")
 const { resetPassword } = require("../utils/resetPassword")
-const { getFrontendUrl } = require("../utils/getFrontendUrl")
 const { forgotPassword } = require("../utils/forgotPassword")
 const { sendVerifyEmail } = require("../utils/sendVerifyEmail")
+const { signupSchema, loginSchema } = require("../validators/validation.schema")
 
 
 
@@ -31,23 +29,41 @@ const generateRefreshToken = (user) => {
 
 exports.signup = async (req, res) => {
   try {
-    const { name, email, password, role } = req.body
+    const { error, value } = signupSchema.validate(req.body, {
+      abortEarly: false,
+      allowUnknown: true,
+    })
+
+    if (error) {
+      return res.status(400).json({
+        message: "Validation error",
+        errors: error.details.map(d => d.message),
+      })
+    }
+    const { name, email, password, role } = value
     const exists = await User.findOne({ where: { email } })
     if (exists) {
       return res.status(400).json({ message: "Email already exists" })
     }
+
     const hashed = await bcrypt.hash(password, 10)
     const token = crypto.randomBytes(32).toString("hex")
 
+    const profileImage = req.file
+    ? `/uploads/${req.file.filename}`
+    : null
+    // console.log("Resolved profileImage:", profileImage)
     await User.create({
       name,
       email,
       password: hashed,
       role: role === "admin" ? "admin" : "user",
-      profileImage: req.file ? `/uploads/${req.file.filename}` : null,
+      profileImage,
       emailVerificationToken: token,
     })
+
     await sendVerifyEmail({ email, token })
+
     res.status(201).json({
       message: "Registration successful. Please verify your email.",
     })
@@ -60,27 +76,59 @@ exports.signup = async (req, res) => {
 
 exports.login = async (req, res) => {
   try {
-    const { email, password } = req.body
+    const { error, value } = loginSchema.validate(req.body, {
+      abortEarly: false,
+      allowUnknown: true,
+    })
+
+    if (error) {
+      return res.status(400).json({
+        message: "Validation error",
+        errors: error.details.map(d => d.message),
+      })
+    }
+
+    const { email, password } = value
+
     const user = await User.findOne({ where: { email } })
     if (!user) {
-        return res.status(404).json({ message: "User not found" })
+      return res.status(401).json({
+        message: "Invalid email or password",
+      })
     }
+
     if (!user.isEmailVerified) {
       return res.status(403).json({
         message: "Please verify your email before logging in",
       })
     }
+
     const match = await bcrypt.compare(password, user.password)
     if (!match) {
-        return res.status(400).json({ message: "Wrong password" })
+      return res.status(401).json({
+        message: "Invalid email or password",
+      })
     }
     const accessToken = generateAccessToken(user)
     const refreshToken = generateRefreshToken(user)
-    return res.json({ accessToken, refreshToken, user })
+    return res.status(200).json({
+      message: "Login successful",
+      accessToken,
+      refreshToken,
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        profileImage: user.profileImage,
+      },
+    })
   } catch (err) {
+    console.error("login error:", err)
     return res.status(500).json({ message: err.message })
   }
 }
+
 
 exports.refreshToken = (req, res) => {
   const { token } = req.body

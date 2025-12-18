@@ -22,7 +22,7 @@ exports.sendMail = async ({ to, subject, htmlContent }) => {
       }
     )
 
-    console.log("Brevo email sent:", response.data)
+    // console.log("Brevo email sent:", response.data)
   } catch (err) {
     console.error(
       "Brevo email failed:",

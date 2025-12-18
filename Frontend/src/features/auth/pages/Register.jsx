@@ -8,6 +8,7 @@ export default function Register() {
   const [preview, setPreview] = useState(null)
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
+
   const onSubmit = async (data) => {
     try {
       setLoading(true)
@@ -17,13 +18,13 @@ export default function Register() {
       formData.append("email", data.email)
       formData.append("password", data.password)
       formData.append("role", data.role)
-      formData.append("image", data.image[0])
 
-      await api.post("/auth/signup", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data"
-        }
-      })
+      if (data.image instanceof FileList && data.image.length > 0) {
+        formData.append("image", data.image[0])
+      }
+      console.log("IMAGE FIELD:", data.image)
+
+      await api.post("/auth/signup", formData)
       alert("Check your email to verify your account")
       navigate("/login")
     } catch (err) {
@@ -60,13 +61,17 @@ export default function Register() {
 
         <div className="flex justify-center mb-4">
           <label className="cursor-pointer">
-            <input
-              type="file"
-              accept="image/*"
-              {...register("image", { required: true })}
-              hidden
-              onChange={(e) => setPreview(URL.createObjectURL(e.target.files[0]))}
-            />
+          <input
+            type="file"
+            accept="image/*"
+            {...register("image")}
+            onChange={(e) => {
+              if (e.target.files?.[0]) {
+                setPreview(URL.createObjectURL(e.target.files[0]))
+              }
+            }}
+          />
+
             
             <img
               src={preview || "/avatar.png"}
