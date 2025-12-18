@@ -7,6 +7,7 @@ const { resetPassword } = require("../utils/resetPassword")
 const { forgotPassword } = require("../utils/forgotPassword")
 const { sendVerifyEmail } = require("../utils/sendVerifyEmail")
 const { signupSchema, loginSchema } = require("../validators/validation.schema")
+const { getFrontendUrl } = require("../utils/getFrontendUrl")
 
 
 
@@ -83,7 +84,7 @@ exports.login = async (req, res) => {
 
     if (error) {
       return res.status(400).json({
-        message: "Validation error",
+        message: "Please enter email and password",
         errors: error.details.map(d => d.message),
       })
     }
@@ -148,10 +149,12 @@ exports.refreshToken = (req, res) => {
 
 exports.googleAuthCallback = async (req, res) => {
   try {
-    console.log("Google user profile:", req.user)
     const googleProfile = req.user
-    let user = await User.findOne({ where: { email: googleProfile.emails[0].value } })
-    console.log("Found user in DB:", user)
+
+    let user = await User.findOne({
+      where: { email: googleProfile.emails[0].value },
+    })
+
     if (!user) {
       user = await User.create({
         name: googleProfile.displayName,
@@ -161,20 +164,15 @@ exports.googleAuthCallback = async (req, res) => {
         isEmailVerified: true,
         profileImage: googleProfile.photos?.[0]?.value || null,
       })
-      console.log("Created new user:", user)
     }
     const accessToken = generateAccessToken(user)
-    console.log("Generated access token:", accessToken);
     const refreshToken = generateRefreshToken(user)
 
-    const redirectUrl = `${process.env.FRONTEND_URL}/oauth-success?token=${accessToken}`;
-    console.log("Redirecting to frontend:", redirectUrl);
-    res.redirect(redirectUrl);
-
+    const frontendUrl = getFrontendUrl()
+    res.redirect(`${frontendUrl}/oauth-success?token=${accessToken}`)
   } catch (err) {
-    console.error(err)
     console.error("OAuth callback error:", err)
-    res.redirect(`${process.env.FRONTEND_URL}/login?error=oauth_failed`)
+    res.redirect(`${getFrontendUrl()}/login?error=oauth_failed`)
   }
 }
 
@@ -214,7 +212,7 @@ exports.resetPassword = async (req, res) => {
 
     res.json({ message: "Password reset successfully" })
   } catch (err) {
-    console.error("resetPassword error:", err)
+    // console.error("resetPassword error:", err)
     res.status(400).json({ message: err.message })
   }
 }
