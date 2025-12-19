@@ -17,12 +17,27 @@ redisClient.on("ready", () => console.log("Redis connected and ready"))
     console.error("Redis connection failed:", err)
   }
 })()
+
 redisClient.safeSetEx = async (key, seconds, value) => {
-  if (!key || !seconds || value === undefined || value === null) {
-    console.warn("Redis safeSetEx skipped due to invalid arguments", { key, seconds, value })
+  if (
+    typeof key !== "string" ||
+    typeof seconds !== "number" ||
+    seconds <= 0 ||
+    value === undefined ||
+    value === null
+  ) {
+    console.warn("Redis safeSetEx skipped due to invalid arguments", {
+      key,
+      seconds,
+      valueType: typeof value,
+    })
     return
   }
-  await redisClient.setEx(key.toString(), Number(seconds), JSON.stringify(value))
+  await redisClient.setEx(
+    key,
+    seconds,
+    JSON.stringify(value)
+  )
 }
 
 module.exports = redisClient

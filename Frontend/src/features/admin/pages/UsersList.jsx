@@ -51,8 +51,8 @@ export default function UsersList() {
           {users.map((u) => (
             <div
               key={u.id}
-              className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 rounded-xl bg-white/10 border border-white/10"
-            >
+              className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between
+                 p-4 rounded-xl bg-white/10 border border-white/10">
               <div>
                 <p className="font-semibold text-lg">{u.name}</p>
                 <p className="text-sm text-gray-300">{u.email}</p>

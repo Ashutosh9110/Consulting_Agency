@@ -1,13 +1,22 @@
 const { Op } = require("sequelize")
 const User = require("../models/User")
-
+const bcrypt = require("bcrypt")  
+const redisClient = require("../lib/redis")
 
 exports.AdminGetUsers = async (req, res) => {
   try {
-    const page = parseInt(req.query.page) || 1
-    const limit = parseInt(req.query.limit) || 10
+    const page = parseInt(req.query.page, 10) || 1
+    const limit = parseInt(req.query.limit, 10) || 10
     const search = req.query.search || ""
     const offset = (page - 1) * limit
+
+    // Cache key MUST include pagination + search
+    const cacheKey = `users:page=${page}:limit=${limit}:search=${search || "all"}`
+
+    const cached = await redisClient.get(cacheKey)
+    if (cached) {
+      return res.json(JSON.parse(cached))
+    }
 
     const { rows, count } = await User.findAndCountAll({
       where: search
@@ -23,7 +32,8 @@ exports.AdminGetUsers = async (req, res) => {
       offset,
       order: [["createdAt", "DESC"]],
     })
-    res.json({
+
+    const response = {
       data: rows,
       pagination: {
         total: count,
@@ -31,11 +41,18 @@ exports.AdminGetUsers = async (req, res) => {
         limit,
         totalPages: Math.ceil(count / limit),
       },
-    })
+    }
+
+    // Cache the FINAL response object only
+    await redisClient.safeSetEx(cacheKey, 60, response)
+
+    return res.json(response)
   } catch (err) {
+    console.error("AdminGetUsers error:", err)
     res.status(500).json({ message: "Failed to fetch users" })
   }
 }
+
 
 
 exports.getProfile = async (req, res) => {

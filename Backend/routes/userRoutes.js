@@ -6,19 +6,14 @@ const redisClient = require("../lib/redis");
 const multer = require("multer")
 const upload = multer({ dest: "uploads/" }) 
 
+
 router.get(
   "/admin-getUsers",
   auth,
   authorizeRoles("admin"),
-  cache("users:"),
-  async (req, res) => {
-    const users = await AdminGetUsers(req, res)
-    if (req.cacheKey) {
-      await redisClient.setEx(req.cacheKey, 60, JSON.stringify(users))
-    }
-    return res.json(users)
-  }
+  AdminGetUsers
 )
+
 
 router.get("/me", auth, getProfile)
 router.put("/me", auth, upload.single("profileImage"), updateProfile)
